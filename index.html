@@ -491,9 +491,8 @@
       parts.push('<rect x="' + (x - gap / 2) + '" y="0" width="' + (barW + gap) + '" height="' + H + '" fill="transparent"/>');
       parts.push('</g>');
     }
-    var lastX = padL + (n - 1) * (barW + gap);
-    parts.push('<text x="' + (padL + barW / 2) + '" y="' + (H - 6) + '" font-size="11" fill="#9a9aa4" text-anchor="middle">1年目</text>');
-    if (n > 1) parts.push('<text x="' + (lastX + barW / 2) + '" y="' + (H - 6) + '" font-size="11" fill="#9a9aa4" text-anchor="middle">' + n + '年目</text>');
+    parts.push('<text x="' + padL + '" y="' + (H - 6) + '" font-size="11" fill="#9a9aa4" text-anchor="start">1年目</text>');
+    if (n > 1) parts.push('<text x="' + (W - padR) + '" y="' + (H - 6) + '" font-size="11" fill="#9a9aa4" text-anchor="end">' + n + '年目</text>');
     svg.innerHTML = parts.join('');
   }
 
