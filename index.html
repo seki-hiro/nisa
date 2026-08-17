@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>28歳から始める資産形成</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #2b2b33;
+    --ink-soft: #6b6b76;
+    --ink-muted: #9a9aa4;
+    --card: #ffffff;
+    --principal: #2a78d6;
+    --gain: #eb6834;
+    --grid: #e7e6e0;
+    --baseline: #c9c8c0;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Kaku Gothic ProN", -apple-system, system-ui, sans-serif;
+    color: var(--ink);
+    background: #f4f2ec;
+    -webkit-text-size-adjust: 100%;
+  }
+  .deck {
+    height: 100dvh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+  }
+  section.slide {
+    min-height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: calc(env(safe-area-inset-top) + 28px) 22px calc(env(safe-area-inset-bottom) + 44px);
+    position: relative;
+  }
+  .inner { width: 100%; max-width: 420px; }
+
+  /* slide background tints */
+  .bg-cream    { background: linear-gradient(180deg, #fff6e0, #ffedc7); }
+  .bg-mint     { background: linear-gradient(180deg, #e5f8ee, #d2f2e2); }
+  .bg-sky      { background: linear-gradient(180deg, #e8f2fe, #d5e8fc); }
+  .bg-pink     { background: linear-gradient(180deg, #fdeef3, #fbdce8); }
+  .bg-lavender { background: linear-gradient(180deg, #f0edfc, #e3ddf9); }
+  .bg-sun      { background: linear-gradient(180deg, #fff3d6, #ffe3ae); }
+
+  .step-chip {
+    display: inline-block;
+    font-size: 13px; font-weight: 800; letter-spacing: 0.08em;
+    color: #fff; background: var(--ink);
+    border-radius: 999px; padding: 6px 14px; margin-bottom: 14px;
+  }
+  h1 { font-size: 34px; line-height: 1.35; font-weight: 800; }
+  h2 { font-size: 26px; line-height: 1.3; font-weight: 800; margin-bottom: 18px; }
+  .big-emoji { font-size: 64px; line-height: 1; margin-bottom: 18px; }
+  p.lead { font-size: 16px; line-height: 1.8; color: var(--ink-soft); }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 18px 18px;
+    box-shadow: 0 4px 16px rgba(43,43,51,0.08);
+    margin-bottom: 12px;
+  }
+  .card h3 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+  .card p { font-size: 14px; line-height: 1.7; color: var(--ink-soft); }
+  .card p strong { color: var(--ink); }
+
+  /* checklist */
+  .check-item { display: flex; align-items: flex-start; gap: 12px; }
+  .check-item + .check-item { margin-top: 12px; }
+  .check-mark {
+    flex: none; width: 30px; height: 30px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 800;
+  }
+  .done .check-mark { background: #d8f3e3; }
+  .todo .check-mark { background: #ffe6c9; }
+  .check-item h3 { font-size: 16px; font-weight: 800; }
+  .done h3 span.tag { color: #0c7a4d; font-size: 12px; margin-left: 6px; }
+  .todo h3 span.tag { color: #c2610a; font-size: 12px; margin-left: 6px; }
+  .check-item p { font-size: 13px; line-height: 1.65; color: var(--ink-soft); margin-top: 3px; }
+
+  .hero-number { font-size: 44px; font-weight: 800; line-height: 1.15; }
+  .hero-number small { font-size: 20px; font-weight: 800; }
+
+  .vs-row { display: flex; gap: 10px; }
+  .vs-row .card { flex: 1; margin-bottom: 0; text-align: center; padding: 16px 10px; }
+  .vs-row .num { font-size: 26px; font-weight: 800; margin: 6px 0 2px; }
+  .vs-row .sub { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+  ul.dots { list-style: none; }
+  ul.dots li {
+    position: relative; padding-left: 24px;
+    font-size: 15px; line-height: 1.7; margin-bottom: 10px;
+  }
+  ul.dots li::before { content: "●"; position: absolute; left: 2px; font-size: 11px; top: 6px; color: var(--gain); }
+
+  .note {
+    font-size: 12px; color: var(--ink-muted); line-height: 1.6; margin-top: 12px;
+  }
+
+  .swipe-hint {
+    position: absolute; bottom: calc(env(safe-area-inset-bottom) + 14px);
+    left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: var(--ink-muted); font-weight: 700;
+    animation: bob 1.6s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translate(-50%,0);} 50% { transform: translate(-50%,6px);} }
+
+  /* ============ simulator ============ */
+  .sim-result { text-align: center; margin-bottom: 12px; }
+  .sim-result .label { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .sim-result .value { font-size: 40px; font-weight: 800; line-height: 1.2; }
+  .sim-result .value small { font-size: 18px; }
+  .legend { display: flex; justify-content: center; gap: 16px; font-size: 12px; color: var(--ink-soft); margin-bottom: 4px; }
+  .legend .chip { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .chip.p { background: var(--principal); }
+  .chip.g { background: var(--gain); }
+  .legend b { color: var(--ink); font-weight: 800; }
+  #chart-wrap { background: var(--card); border-radius: 16px; padding: 12px 10px 6px; box-shadow: 0 4px 16px rgba(43,43,51,0.08); }
+  #chart { width: 100%; display: block; touch-action: manipulation; }
+  .bar-readout { text-align: center; font-size: 12px; color: var(--ink-soft); min-height: 18px; margin-top: 4px; }
+  .bar-readout b { color: var(--ink); }
+  .sim-controls { margin-top: 12px; }
+  .ctrl { display: grid; grid-template-columns: 74px 1fr 74px; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .ctrl label { font-size: 13px; font-weight: 800; }
+  .ctrl output { font-size: 14px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--principal); height: 30px; }
+  .deposit-compare { font-size: 12.5px; color: var(--ink-soft); text-align: center; margin-top: 8px; line-height: 1.6; }
+  details.sim-table { margin-top: 10px; font-size: 12px; color: var(--ink-soft); }
+  details.sim-table summary { font-weight: 700; cursor: pointer; }
+  details.sim-table table { width: 100%; border-collapse: collapse; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  details.sim-table th, details.sim-table td { text-align: right; padding: 3px 4px; border-bottom: 1px solid var(--grid); }
+  details.sim-table th:first-child, details.sim-table td:first-child { text-align: left; }
+
+  .final-list { counter-reset: todo; }
+  .final-item { display: flex; align-items: center; gap: 14px; }
+  .final-item + .final-item { margin-top: 12px; }
+  .final-num {
+    flex: none; width: 40px; height: 40px; border-radius: 14px;
+    background: var(--ink); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800;
+  }
+  .final-item h3 { font-size: 16px; font-weight: 800; }
+  .final-item p { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1. cover -->
+  <section class="slide bg-cream">
+    <div class="inner" style="text-align:center;">
+      <div class="big-emoji">🌱💰</div>
+      <h1>28歳から始める<br>資産形成</h1>
+      <p class="lead" style="margin-top:14px;">はじめてのNISA、今日デビューしよう</p>
+    </div>
+    <div class="swipe-hint">スワイプしてね ↓</div>
+  </section>
+
+  <!-- 2. 事前準備チェック -->
+  <section class="slide bg-mint">
+    <div class="inner">
+      <span class="step-chip">STEP 0</span>
+      <h2>準備チェック ✅</h2>
+      <div class="card check-item done">
+        <div class="check-mark">✅</div>
+        <div><h3>SBI証券の総合口座<span class="tag">クリア!</span></h3><p>投資の入り口になる口座。もう持ってる!</p></div>
+      </div>
+      <div class="card check-item done">
+        <div class="check-mark">✅</div>
+        <div><h3>三井住友カード（NL）<span class="tag">クリア!</span></h3><p>これで「クレカ積立」ができる。準備ばっちり!</p></div>
+      </div>
+      <div class="card check-item todo">
+        <div class="check-mark">📱</div>
+        <div><h3>SBI証券アプリ<span class="tag">今日やる</span></h3><p>ダウンロードしてログインするだけ</p></div>
+      </div>
+      <div class="card check-item todo">
+        <div class="check-mark">🏦</div>
+        <div><h3>NISA口座の開設<span class="tag">要チェック</span></h3><p>総合口座とは<strong>別に申込みが必要</strong>。税務署の審査があるから数日かかるよ（アプリから無料で申込みできる）</p></div>
+      </div>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 3. クレカ積立のおまけ -->
+  <section class="slide bg-sky">
+    <div class="inner" style="text-align:center;">
+      <div class="big-emoji">✈️</div>
+      <h2>おまけ:積立でマイルが貯まる</h2>
+      <p class="lead">クレカ積立はポイント還元 <b>0.5%</b></p>
+      <div class="card" style="margin-top:16px;">
+        <p style="font-size:15px;">満額の<strong>月10万円</strong>を積み立てると…</p>
+        <div class="hero-number" style="margin:8px 0;">年6,000<small>pt</small></div>
+        <p>ANAマイルに交換すると <strong>約3,000マイル</strong>🛫<br>積み立てるだけで勝手に貯まる!</p>
+      </div>
+      <p class="note">※2年目以降は前年に積立以外で年10万円以上のカード利用が条件（初年度は無条件）</p>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 4. なぜ投資? -->
+  <section class="slide bg-pink">
+    <div class="inner">
+      <span class="step-chip">STEP 1</span>
+      <h2>なぜ投資するの? 🤔</h2>
+      <p class="lead" style="margin-bottom:14px;">100万円を1年置いておくと…</p>
+      <div class="vs-row">
+        <div class="card">
+          <div style="font-size:26px;">🏦</div>
+          <div class="sub">銀行預金の金利<br>年0.4%</div>
+          <div class="num" style="color:var(--principal);">+4,000円</div>
+        </div>
+        <div class="card">
+          <div style="font-size:26px;">🛒</div>
+          <div class="sub">インフレで物価上昇<br>年約2%</div>
+          <div class="num" style="color:#c2412a;">−20,000円<div style="font-size:11px;font-weight:700;color:var(--ink-soft);">相当の価値が目減り</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h3>つまり…預金だけだと実質マイナス😱</h3>
+        <p>お金に「置き場所」だけじゃなく「働き場所」をあげよう、というのが投資の考え方</p>
+      </div>
+      <p class="note">※大手銀行の普通預金金利（2026年8月時点 年0.4%）と消費者物価上昇率（約2%）より</p>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 5. 個別株 -->
+  <section class="slide bg-lavender">
+    <div class="inner">
+      <span class="step-chip">STEP 2</span>
+      <h2>個別株ってどう? 📈</h2>
+      <div class="card">
+        <h3>例:「ユニクロの柳井さんを応援したい!」</h3>
+        <p>→ ファーストリテイリングの株を買う、というのが個別株投資</p>
+      </div>
+      <div class="card">
+        <h3>でも、ハードルが高い…💦</h3>
+        <ul class="dots" style="margin-top:8px;">
+          <li>日本株は基本<strong>100株単位</strong>。ファストリだと<strong>数百万円</strong>必要😇</li>
+          <li>1社の業績に資産が大きく左右される</li>
+          <li>その会社のニュースをずっと追い続ける必要がある</li>
+        </ul>
+      </div>
+      <p class="lead" style="text-align:center; margin-top:8px;">初心者にはちょっと大変…<br>そこで👇</p>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 6. 投資信託 -->
+  <section class="slide bg-sun">
+    <div class="inner">
+      <span class="step-chip">STEP 3</span>
+      <h2>投資信託という選択肢 🌍</h2>
+      <div class="card">
+        <h3>プロにおまかせ!👩‍💼</h3>
+        <p>みんなのお金を集めて、運用のプロがまとめて投資してくれる商品</p>
+      </div>
+      <div class="card">
+        <h3>1本で何千社にも分散</h3>
+        <p>たとえば「全世界株」の投資信託なら、<strong>世界中の数千社</strong>にまとめて投資。1社がコケても影響は小さい</p>
+      </div>
+      <div class="card">
+        <h3>種類もいろいろ</h3>
+        <p>全世界株🌏 / 米国株🇺🇸 / 日本株🇯🇵 / REIT（不動産）🏢 など</p>
+      </div>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 7. NISAとは -->
+  <section class="slide bg-mint">
+    <div class="inner">
+      <span class="step-chip">STEP 4</span>
+      <h2>NISAとは? 🎁</h2>
+      <p class="lead" style="margin-bottom:14px;">投資の利益が<b>非課税</b>になる制度</p>
+      <div class="vs-row">
+        <div class="card">
+          <div class="sub">ふつうの口座</div>
+          <div class="num" style="color:#c2412a;">−約20%</div>
+          <div class="sub">利益20万円なら<br><strong>約4万円</strong>が税金に</div>
+        </div>
+        <div class="card" style="outline:3px solid var(--gain);">
+          <div class="sub">NISA口座</div>
+          <div class="num" style="color:var(--gain);">税金0円</div>
+          <div class="sub">利益20万円が<br><strong>まるまる</strong>もらえる🎉</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h3>枠は2種類</h3>
+        <p>🌱 <strong>つみたて投資枠</strong>:年120万円まで。コツコツ積立用（今日はこっち!）<br>
+           🚀 <strong>成長投資枠</strong>:年240万円まで。個別株などもOK</p>
+      </div>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 8. 注意点 -->
+  <section class="slide bg-pink">
+    <div class="inner">
+      <span class="step-chip">STEP 4.5</span>
+      <h2>注意点もあるよ ⚠️</h2>
+      <div class="card">
+        <h3>元本保証じゃない📉</h3>
+        <p>下がるときもある。これまで日経平均は長く右肩上がりだったけど、未来はわからない。<br><strong>→ だからこそ「長期・積立・分散」。下がっても慌てて売らず、コツコツ続けるのがコツ</strong></p>
+      </div>
+      <div class="card">
+        <h3>すぐには引き出せない🐢</h3>
+        <p>売ってからお金になるまで<strong>数営業日〜1週間</strong>くらいかかる。ATMみたいにはいかない</p>
+      </div>
+      <div class="card">
+        <h3>だから余剰資金で💡</h3>
+        <p>生活費の<strong>3〜6ヶ月分は現金</strong>で残して、それ以外の「当面使わないお金」で投資しよう</p>
+      </div>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 9. simulator -->
+  <section class="slide bg-sky">
+    <div class="inner">
+      <span class="step-chip">STEP 5</span>
+      <h2>シミュレーションしてみよう 🧮</h2>
+      <div class="sim-result">
+        <div class="label"><span id="sum-cond"></span> 積み立てると</div>
+        <div class="value" id="sum-total"></div>
+      </div>
+      <div class="legend">
+        <span><span class="chip p"></span>積立元本 <b id="sum-principal"></b></span>
+        <span><span class="chip g"></span>増えた額 <b id="sum-gain"></b></span>
+      </div>
+      <div id="chart-wrap">
+        <svg id="chart" viewBox="0 0 360 190" aria-label="年ごとの積立資産の棒グラフ"></svg>
+        <div class="bar-readout" id="bar-readout">グラフをタップすると年ごとの内訳が見られるよ</div>
+      </div>
+      <div class="sim-controls">
+        <div class="ctrl">
+          <label for="in-monthly">毎月</label>
+          <input type="range" id="in-monthly" min="0.5" max="10" step="0.5" value="5">
+          <output id="out-monthly">5万円</output>
+        </div>
+        <div class="ctrl">
+          <label for="in-years">期間</label>
+          <input type="range" id="in-years" min="1" max="40" step="1" value="10">
+          <output id="out-years">10年</output>
+        </div>
+        <div class="ctrl">
+          <label for="in-rate">利回り</label>
+          <input type="range" id="in-rate" min="0" max="10" step="0.5" value="5">
+          <output id="out-rate">年5%</output>
+        </div>
+      </div>
+      <div class="deposit-compare" id="deposit-compare"></div>
+      <details class="sim-table">
+        <summary>表で見る</summary>
+        <table id="sim-table-body"></table>
+      </details>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 10. 始めよう -->
+  <section class="slide bg-lavender">
+    <div class="inner">
+      <span class="step-chip">STEP 6</span>
+      <h2>NISAを始めてみよう 🚀</h2>
+      <div class="card">
+        <h3>月々いくらにする?</h3>
+        <p><strong>100円から</strong>始められて、金額は<strong>いつでも変更OK</strong>。まずは無理のない額からで大丈夫</p>
+      </div>
+      <div class="card">
+        <h3>みんなは何を買ってる?</h3>
+        <p>人気ランキングの常連はこの2つ:<br>
+        🌏 <strong>eMAXIS Slim 全世界株式</strong>（通称オルカン）<br>
+        🇺🇸 <strong>eMAXIS Slim 米国株式（S&amp;P500）</strong></p>
+      </div>
+      <div class="card">
+        <h3>変なものは売ってない🛡️</h3>
+        <p>つみたて投資枠の対象は、<strong>手数料が低い・長期積立向き</strong>という金融庁の基準をクリアした投資信託だけ</p>
+      </div>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 11. 今日やること -->
+  <section class="slide bg-sun">
+    <div class="inner">
+      <h2 style="text-align:center;">今日やること3つ 📝</h2>
+      <div class="final-list" style="margin-top:20px;">
+        <div class="card final-item">
+          <div class="final-num">1</div>
+          <div><h3>クレカをSBI証券に登録</h3><p>三井住友カード（NL）をアプリで紐づけ</p></div>
+        </div>
+        <div class="card final-item">
+          <div class="final-num">2</div>
+          <div><h3>銘柄を選ぶ</h3><p>つみたて投資枠から気になる1本を</p></div>
+        </div>
+        <div class="card final-item">
+          <div class="final-num">3</div>
+          <div><h3>毎月の金額を設定</h3><p>クレカ積立で自動化。あとはほったらかしでOK</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="swipe-hint">↓</div>
+  </section>
+
+  <!-- 12. ending -->
+  <section class="slide bg-cream">
+    <div class="inner" style="text-align:center;">
+      <div class="big-emoji">📮</div>
+      <h1 style="font-size:28px;">未来の自分に、<br>毎月ちょっと仕送りしよう</h1>
+      <p class="lead" style="margin-top:16px;">今日がいちばん若い日🌱<br>おつかれさまでした!</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var inMonthly = document.getElementById('in-monthly');
+  var inYears   = document.getElementById('in-years');
+  var inRate    = document.getElementById('in-rate');
+  var svg = document.getElementById('chart');
+  var selectedYear = null;
+  var current = null;
+
+  function fv(monthlyYen, annualRate, months) {
+    if (annualRate === 0) return monthlyYen * months;
+    var r = annualRate / 12;
+    return monthlyYen * (Math.pow(1 + r, months) - 1) / r;
+  }
+
+  function fmtMan(yen) {
+    var man = yen / 10000;
+    if (man >= 10000) {
+      var oku = Math.floor(man / 10000);
+      var rest = Math.round(man - oku * 10000);
+      if (rest === 10000) { oku += 1; rest = 0; }
+      return rest > 0 ? oku + '億' + rest.toLocaleString() + '万円' : oku + '億円';
+    }
+    return Math.round(man).toLocaleString() + '万円';
+  }
+
+  function compute() {
+    var m = parseFloat(inMonthly.value) * 10000;
+    var years = parseInt(inYears.value, 10);
+    var rate = parseFloat(inRate.value) / 100;
+    var byYear = [];
+    for (var y = 1; y <= years; y++) {
+      var total = fv(m, rate, y * 12);
+      var principal = m * y * 12;
+      byYear.push({ year: y, principal: principal, gain: Math.max(0, total - principal), total: total });
+    }
+    return { m: m, years: years, rate: rate, byYear: byYear, deposit: fv(m, 0.004, years * 12) };
+  }
+
+  function drawChart(d) {
+    var W = 360, H = 190, padL = 6, padR = 6, padT = 10, padB = 22;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var n = d.byYear.length;
+    var gap = n > 25 ? 1 : 2;
+    var barW = Math.max(2, (plotW - gap * (n - 1)) / n);
+    var maxV = d.byYear[n - 1].total || 1;
+    var parts = [];
+    parts.push('<line x1="' + padL + '" y1="' + (padT + plotH) + '" x2="' + (W - padR) + '" y2="' + (padT + plotH) + '" stroke="#c9c8c0" stroke-width="1"/>');
+    for (var i = 0; i < n; i++) {
+      var b = d.byYear[i];
+      var x = padL + i * (barW + gap);
+      var hP = b.principal / maxV * plotH;
+      var hG = b.gain / maxV * plotH;
+      var segGap = (hG > 3 && hP > 3) ? 2 : 0;
+      var r = Math.min(4, barW / 2);
+      var yTop = padT + plotH - hP - hG;
+      var dim = (selectedYear !== null && selectedYear !== b.year) ? ' opacity="0.45"' : '';
+      parts.push('<g data-year="' + b.year + '"' + dim + '>');
+      if (hG > segGap + 1) {
+        parts.push('<path d="M' + x + ' ' + (yTop + r) + ' q0 -' + r + ' ' + r + ' -' + r + ' h' + (barW - 2 * r) + ' q' + r + ' 0 ' + r + ' ' + r + ' v' + Math.max(0, hG - r - segGap) + ' h-' + barW + ' Z" fill="#eb6834"/>');
+        parts.push('<rect x="' + x + '" y="' + (padT + plotH - hP) + '" width="' + barW + '" height="' + hP + '" fill="#2a78d6"/>');
+      } else {
+        parts.push('<path d="M' + x + ' ' + (yTop + r) + ' q0 -' + r + ' ' + r + ' -' + r + ' h' + (barW - 2 * r) + ' q' + r + ' 0 ' + r + ' ' + r + ' v' + Math.max(0, hP + hG - r) + ' h-' + barW + ' Z" fill="#2a78d6"/>');
+      }
+      parts.push('<rect x="' + (x - gap / 2) + '" y="0" width="' + (barW + gap) + '" height="' + H + '" fill="transparent"/>');
+      parts.push('</g>');
+    }
+    var lastX = padL + (n - 1) * (barW + gap);
+    parts.push('<text x="' + (padL + barW / 2) + '" y="' + (H - 6) + '" font-size="11" fill="#9a9aa4" text-anchor="middle">1年目</text>');
+    if (n > 1) parts.push('<text x="' + (lastX + barW / 2) + '" y="' + (H - 6) + '" font-size="11" fill="#9a9aa4" text-anchor="middle">' + n + '年目</text>');
+    svg.innerHTML = parts.join('');
+  }
+
+  function updateReadout(d) {
+    var el = document.getElementById('bar-readout');
+    if (selectedYear === null) {
+      el.innerHTML = 'グラフをタップすると年ごとの内訳が見られるよ';
+      return;
+    }
+    var b = d.byYear[selectedYear - 1];
+    el.innerHTML = '<b>' + b.year + '年目:</b> 合計 <b>' + fmtMan(b.total) + '</b>（元本 ' + fmtMan(b.principal) + ' + 増えた額 ' + fmtMan(b.gain) + '）';
+  }
+
+  function updateTable(d) {
+    var rows = ['<tr><th>年</th><th>元本</th><th>増えた額</th><th>合計</th></tr>'];
+    for (var i = 0; i < d.byYear.length; i++) {
+      var b = d.byYear[i];
+      if (b.year % 5 === 0 || b.year === d.years || b.year === 1) {
+        rows.push('<tr><td>' + b.year + '年目</td><td>' + fmtMan(b.principal) + '</td><td>' + fmtMan(b.gain) + '</td><td>' + fmtMan(b.total) + '</td></tr>');
+      }
+    }
+    document.getElementById('sim-table-body').innerHTML = rows.join('');
+  }
+
+  function render() {
+    var d = compute();
+    current = d;
+    if (selectedYear !== null && selectedYear > d.years) selectedYear = null;
+    var last = d.byYear[d.years - 1];
+    document.getElementById('out-monthly').textContent = (d.m / 10000) + '万円';
+    document.getElementById('out-years').textContent = d.years + '年';
+    document.getElementById('out-rate').textContent = '年' + (d.rate * 100) + '%';
+    document.getElementById('sum-cond').textContent = '毎月' + (d.m / 10000) + '万円を' + d.years + '年・年' + (d.rate * 100) + '%で';
+    var totalStr = fmtMan(last.total);
+    document.getElementById('sum-total').innerHTML = totalStr.replace(/(億|万円)/g, '<small>$1</small>');
+    document.getElementById('sum-principal').textContent = fmtMan(last.principal);
+    document.getElementById('sum-gain').textContent = fmtMan(last.gain);
+    document.getElementById('deposit-compare').innerHTML =
+      'ちなみに同じ額を銀行預金（年0.4%）に置いておくと <b>' + fmtMan(d.deposit) + '</b>。差は <b>' + fmtMan(last.total - d.deposit) + '</b>!';
+    drawChart(d);
+    updateReadout(d);
+    updateTable(d);
+  }
+
+  svg.addEventListener('click', function (e) {
+    var g = e.target.closest('g[data-year]');
+    if (!g) return;
+    var y = parseInt(g.getAttribute('data-year'), 10);
+    selectedYear = (selectedYear === y) ? null : y;
+    drawChart(current);
+    updateReadout(current);
+  });
+
+  [inMonthly, inYears, inRate].forEach(function (el) {
+    el.addEventListener('input', function () { selectedYear = null; render(); });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
